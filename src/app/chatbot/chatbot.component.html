@@ -1,0 +1,52 @@
+<div class="chatbot-container">
+  <!-- Chat Header -->
+  <div class="chat-header">Chatbot</div>
+
+  <!-- Chat Messages -->
+  <div class="chat-messages">
+    <ul>
+      <li *ngFor="let message of messages" class="message-item">
+        <div class="message" [ngClass]="message.sender">
+          <div *ngIf="message.attachment && isImage(message.attachment)" class="attachment-image">
+            <img [src]="message.attachment" (click)="previewFile(message.attachment)">
+          </div>
+          <div *ngIf="message.attachment && !isImage(message.attachment)" class="attachment">
+            <div class="attachment-name">{{ message.attachment.name }}</div>
+            <div class="attachment-actions">
+              <button (click)="previewFile(message.attachment)">Preview</button>
+            </div>
+          </div>
+          <div *ngIf="!message.attachment">
+            {{ message.text }}
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Chat Input -->
+  <div class="chat-input">
+    <input type="text" [(ngModel)]="newMessage" placeholder="Type a message..." (keyup.enter)="sendMessage()">
+    <button (click)="sendMessage()">Send</button>
+    <label class="file-upload-label">
+      <i class="fas fa-paperclip"></i>
+      <input type="file" (change)="handleFileInput($event)" hidden>
+    </label>
+  </div>
+
+  <!-- File Preview Modal -->
+  <div *ngIf="previewUrl" class="modal" (click)="closePreview()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <span class="close" (click)="closePreview()">&times;</span>
+      <div *ngIf="isImage(previewUrl)">
+        <img [src]="previewUrl" alt="Preview" class="preview-image">
+      </div>
+      <div *ngIf="isPDF(previewUrl)">
+        <iframe [src]="previewUrl" type="application/pdf" class="preview-pdf"></iframe>
+      </div>
+      <div *ngIf="!isImage(previewUrl) && !isPDF(previewUrl)">
+        <p>Unsupported file type</p>
+      </div>
+    </div>
+  </div>
+</div>
